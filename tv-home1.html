@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>واجهة التلفاز</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:dark;--glow:#3a4a7a;--text:#f5f5f7;--muted:rgba(245,245,247,.62);
+  box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;min-height:100vh;color:var(--text);font-family:-apple-system,"SF Pro Display","Tajawal",system-ui,sans-serif;
+  background:radial-gradient(1100px 700px at 50% -10%,var(--glow),transparent 70%),#0b0b0f;transition:background .6s}
+main{max-width:1280px;margin:0 auto;padding:clamp(14px,3vw,40px)}
+nav{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.tabs{display:flex;gap:6px;background:rgba(255,255,255,.08);padding:5px;border-radius:999px;backdrop-filter:blur(20px)}
+.tab{border:0;background:transparent;color:var(--muted);font:600 clamp(13px,1.6vw,19px) inherit;font-family:inherit;padding:8px clamp(12px,2vw,26px);border-radius:999px;cursor:pointer;outline:none;transition:.2s}
+.tab[aria-current]{color:#fff}
+.tab:focus-visible,.tab:hover{background:rgba(255,255,255,.95);color:#111;transform:scale(1.06)}
+#time{font-size:clamp(18px,2.4vw,30px);font-weight:600;color:var(--muted)}
+.hero{display:block;width:100%;margin-top:clamp(16px,3vw,32px);border:0;border-radius:26px;color:#fff;text-align:start;
+  min-height:clamp(200px,34vw,380px);padding:clamp(18px,3.4vw,44px);cursor:pointer;outline:none;font-family:inherit;
+  background:linear-gradient(120deg,rgba(0,0,0,.55),transparent 65%),linear-gradient(135deg,#5b3df5,#d43f8d 60%,#ff9a5a);
+  display:flex;flex-direction:column;justify-content:flex-end;gap:8px;transition:transform .25s,box-shadow .25s}
+.hero small{font-size:clamp(13px,1.6vw,19px);opacity:.85;font-weight:500}
+.hero b{font-size:clamp(28px,5.5vw,64px);font-weight:800;line-height:1.1}
+.hero span{width:max-content;margin-top:10px;background:rgba(255,255,255,.92);color:#111;font-weight:700;padding:9px 24px;border-radius:999px;font-size:clamp(14px,1.8vw,20px)}
+h2{font-size:clamp(17px,2.2vw,26px);font-weight:700;margin:clamp(22px,4vw,44px) 0 4px}
+.row{display:flex;gap:clamp(12px,2vw,26px);overflow-x:auto;padding:22px 14px 40px;margin:0 -14px;scrollbar-width:none}
+.row::-webkit-scrollbar{display:none}
+.item{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;gap:10px;text-decoration:none;color:inherit;border:0;background:none;font-family:inherit;cursor:pointer;outline:none}
+.card{width:clamp(96px,14vw,170px);aspect-ratio:1;border-radius:22%;display:flex;align-items:center;justify-content:center;
+  font-size:clamp(34px,6vw,70px);transition:transform .25s cubic-bezier(.2,.8,.2,1),box-shadow .25s;position:relative;overflow:hidden}
+.item.wide .card{width:clamp(200px,30vw,380px);aspect-ratio:16/9;border-radius:18px;align-items:flex-end;justify-content:flex-start;
+  padding:14px 16px;font-size:clamp(16px,2.2vw,26px);font-weight:800;text-align:start}
+.card::after{content:"";position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.28),transparent 45%);opacity:0;transition:opacity .25s}
+.name{font-size:clamp(12px,1.5vw,18px);font-weight:600;color:var(--muted);opacity:0;transform:translateY(-4px);transition:.25s}
+.item:focus-visible .card,.item:hover .card,.hero:focus-visible,.hero:hover{transform:scale(1.12);box-shadow:0 22px 50px rgba(0,0,0,.65),0 0 0 3px rgba(255,255,255,.9)}
+.item:focus-visible .card::after,.item:hover .card::after{opacity:1}
+.item:focus-visible .name,.item:hover .name{opacity:1;transform:none;color:#fff}
+.hero:focus-visible,.hero:hover{transform:scale(1.02)}
+#toast{position:fixed;inset-inline:0;bottom:calc(22px + env(safe-area-inset-bottom,0px));margin:auto;width:max-content;max-width:90%;background:rgba(40,40,48,.92);backdrop-filter:blur(20px);padding:12px 22px;border-radius:999px;opacity:0;transition:opacity .25s;pointer-events:none}
+#toast.on{opacity:1}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<main>
+  <nav>
+    <div class="tabs" data-row>
+      <button class="tab" aria-current="page" data-msg="الرئيسية">الرئيسية</button>
+      <button class="tab" data-msg="التطبيقات">التطبيقات</button>
+      <button class="tab" data-msg="البحث">البحث</button>
+      <button class="tab" data-msg="الإعدادات">الإعدادات</button>
+    </div>
+    <div id="time">--:--</div>
+  </nav>
+
+  <button class="hero" data-glow="#7a3df0" data-msg="تشغيل: أفلام اليوم">
+    <small id="greet">مرحباً</small>
+    <b>أفلام اليوم</b>
+    <span>تشغيل</span>
+  </button>
+
+  <h2>التطبيقات</h2>
+  <div class="row">
+    <a class="item" data-glow="#b3261e" href="https://www.youtube.com/tv" target="_blank" rel="noopener"><div class="card" style="background:#e53935">▶</div><div class="name">يوتيوب</div></a>
+    <a class="item" data-glow="#7a1212" href="https://www.netflix.com" target="_blank" rel="noopener"><div class="card" style="background:#1c1c1e;color:#e50914">N</div><div class="name">نتفلكس</div></a>
+    <a class="item" data-glow="#1f7a54" href="https://shahid.mbc.net" target="_blank" rel="noopener"><div class="card" style="background:#2e9d6f">ش</div><div class="name">شاهد</div></a>
+    <a class="item" data-glow="#2a52c9" href="https://www.google.com" target="_blank" rel="noopener"><div class="card" style="background:#3b6cf0">◎</div><div class="name">المتصفح</div></a>
+    <button class="item" data-glow="#7a4fb0" data-msg="أضف تطبيقاً هنا"><div class="card" style="background:#3a3a42">+</div><div class="name">إضافة</div></button>
+  </div>
+
+  <h2>تابع المشاهدة</h2>
+  <div class="row">
+    <button class="item wide" data-glow="#1b7f8c" data-msg="تشغيل: القنوات المباشرة"><div class="card" style="background:linear-gradient(135deg,#1fb6a6,#1b4fa8)">القنوات المباشرة</div></button>
+    <button class="item wide" data-glow="#c4572a" data-msg="تشغيل: مسلسلات مختارة"><div class="card" style="background:linear-gradient(135deg,#f2a24c,#d6452a)">مسلسلات مختارة</div></button>
+    <button class="item wide" data-glow="#4a3aa8" data-msg="تشغيل: وثائقيات"><div class="card" style="background:linear-gradient(135deg,#6a5cff,#2a1e78)">وثائقيات</div></button>
+  </div>
+</main>
+<div id="toast" role="status"></div>
+<script>
+(function(){
+  var els=[].slice.call(document.querySelectorAll(".tab,.hero,.item"));
+  var toast=document.getElementById("toast"),tt;
+  function say(m){toast.textContent=m;toast.classList.add("on");clearTimeout(tt);tt=setTimeout(function(){toast.classList.remove("on")},2000)}
+  function tick(){
+    var d=new Date();
+    document.getElementById("time").textContent=d.toLocaleTimeString("ar-EG",{hour:"2-digit",minute:"2-digit",hour12:false});
+    var h=d.getHours();document.getElementById("greet").textContent=h<12?"صباح الخير":h<18?"مساء النور":"مساء الخير";
+  }
+  tick();setInterval(tick,15000);
+  els.forEach(function(el){
+    el.addEventListener("focus",function(){var g=el.getAttribute("data-glow");if(g)document.documentElement.style.setProperty("--glow",g)});
+    el.addEventListener("click",function(){var m=el.getAttribute("data-msg");if(m)say(m)});
+  });
+  function c(r){return{x:r.left+r.width/2,y:r.top+r.height/2}}
+  function move(dir){
+    var cur=document.activeElement;
+    if(els.indexOf(cur)<0){els[0].focus();return}
+    var a=c(cur.getBoundingClientRect()),best=null,bd=1e9;
+    els.forEach(function(t){
+      if(t===cur)return;
+      var p=c(t.getBoundingClientRect()),dx=p.x-a.x,dy=p.y-a.y,ok=false,d;
+      if(dir==="left"){ok=dx<-5&&Math.abs(dy)<Math.abs(dx)*1.5;d=Math.abs(dx)+Math.abs(dy)*2}
+      if(dir==="right"){ok=dx>5&&Math.abs(dy)<Math.abs(dx)*1.5;d=Math.abs(dx)+Math.abs(dy)*2}
+      if(dir==="up"){ok=dy<-5;d=Math.abs(dy)+Math.abs(dx)*2}
+      if(dir==="down"){ok=dy>5;d=Math.abs(dy)+Math.abs(dx)*2}
+      if(ok&&d<bd){bd=d;best=t}
+    });
+    if(best){best.focus();best.scrollIntoView({block:"nearest",inline:"center",behavior:"smooth"})}
+  }
+  document.addEventListener("keydown",function(e){
+    var m={ArrowLeft:"left",ArrowRight:"right",ArrowUp:"up",ArrowDown:"down"}[e.key];
+    if(m){e.preventDefault();move(m)}
+  });
+  document.querySelector(".hero").focus();
+})();
+</script>
+</body>
+</html>
